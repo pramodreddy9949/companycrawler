@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Use Case Generator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+      margin: 0;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 15px;
+      color: #444;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      background-color: #3498db;
+      color: white;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    #loader {
+      display: none;
+      margin: 20px auto;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #output {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 25px;
+      width: 100%;
+      max-width: 700px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Use Case Generator</h1>
+  <div class="form-container">
+    <label>
+      Company Name:
+      <input type="text" id="companyName" placeholder="e.g., Google" />
+    </label>
+    <label>
+      Industry:
+      <input type="text" id="industry" placeholder="e.g., Technology" />
+    </label>
+    <button onclick="generateUseCases()">Generate Use Cases</button>
+    <div id="loader"></div>
+  </div>
+
+  <pre id="output"></pre>
+
+  <script>
+    async function generateUseCases() {
+      const companyName = document.getElementById('companyName').value;
+      const industry = document.getElementById('industry').value;
+      const loader = document.getElementById('loader');
+      const output = document.getElementById('output');
+
+      loader.style.display = 'block';
+      output.textContent = '';
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/generate-use-cases/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            company_name: companyName,
+            industry: industry
+          })
+        });
+
+        const data = await response.json();
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        output.textContent = '❌ Error: ' + error.message;
+      } finally {
+        loader.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
