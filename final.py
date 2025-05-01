@@ -8,6 +8,11 @@ from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 
 from groq import Groq
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # This loads the environment variables from .env
+
 # FastAPI app initialization
 app = FastAPI()
 app.add_middleware(
@@ -65,7 +70,8 @@ def get_company_info(company_name):
 from groq import Groq
 
 def groq_api_call(company_info, industry):
-    client = Groq(api_key="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")
+    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
 
     # Construct your prompt using input parameters
     prompt = """
