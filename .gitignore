@@ -7,4 +7,4 @@ __pycache__/
 venv/
 env/
 .venv/
-.env/  # Your environment variables file
+.env
