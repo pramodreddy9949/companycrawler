@@ -1,13 +1,13 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import requests
-import ollama
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 
-
+from groq import Groq
 # FastAPI app initialization
 app = FastAPI()
 app.add_middleware(
@@ -34,8 +34,41 @@ def get_company_info(company_name):
         return "Company not found on Wikipedia."
 
 # Function to generate AI use cases
-def generate_ai_usecases(company_info, industry, model="gemma3"):
-    system_prompt = """
+# def generate_ai_usecases(company_info, industry, model="gemma3"):
+#     system_prompt = """
+#     You are an expert AI strategist specializing in Artificial Intelligence and Generative AI (GenAI) applications.
+
+#     Your job is to:
+#     - Read the company overview and identify its key business activities.
+#     - Understand its industry segment.
+#     - Suggest 5 tailored AI/GenAI/ML use cases that improve the company's internal operations or customer experience.
+#     - Each use case should have a short explanation.
+#     - At least one use case should use Generative AI (like AI chat, report generation, or intelligent search).
+#     """
+
+#     user_prompt = f"""
+#     Company Overview:
+#     {company_info}
+
+#     Industry:
+#     {industry}
+
+#     Please generate the use cases now.
+#     """
+
+#     response = ollama.chat(model=model, messages=[
+#         {"role": "system", "content": system_prompt},
+#         {"role": "user", "content": user_prompt}
+#     ])
+
+#     return response['message']['content']
+from groq import Groq
+
+def groq_api_call(company_info, industry):
+    client = Groq(api_key="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")
+
+    # Construct your prompt using input parameters
+    prompt = """
     You are an expert AI strategist specializing in Artificial Intelligence and Generative AI (GenAI) applications.
 
     Your job is to:
@@ -56,12 +89,32 @@ def generate_ai_usecases(company_info, industry, model="gemma3"):
     Please generate the use cases now.
     """
 
-    response = ollama.chat(model=model, messages=[
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_prompt}
-    ])
+    completion = client.chat.completions.create(
+        model="qwen-qwq-32b",
+        messages=[
+            {
+                
+                "role": "system","content": prompt
+            },
+            {
+                "role": "user",
+                "content": user_prompt
+            }
+        ],
+        temperature=0.6,
+        max_completion_tokens=4096,
+        top_p=0.95,
+        stream=True,
+        stop=None,
+    )
 
-    return response['message']['content']
+    full_response = ""
+    for chunk in completion:
+        full_response += chunk.choices[0].delta.content or ""
+    
+    return full_response
+
+
 
 # FastAPI endpoint to handle the request and generate use cases
 @app.post("/generate-use-cases/")
@@ -69,7 +122,7 @@ def generate_use_cases(request: CompanyInfoRequest):
     company_info = get_company_info(request.company_name)
     print(company_info)
     industry = request.industry
-    use_cases = generate_ai_usecases(company_info, industry)
+    use_cases = groq_api_call(company_info, industry)
     print(use_cases)
     return {"company_info": company_info, "use_cases": use_cases}
 
