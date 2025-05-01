@@ -6,7 +6,7 @@ def get_company_info(company_name):
 
     if response.status_code == 200:
         data = response.json()
-        return data.get("extract", "No extract found.")
+        return data.get("extract", "No extract data found.")
     else:
         return "Company not found on Wikipedia."
 
