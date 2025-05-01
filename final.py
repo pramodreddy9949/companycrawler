@@ -69,15 +69,21 @@ def groq_api_call(company_info, industry):
 
     # Construct your prompt using input parameters
     prompt = """
-    You are an expert AI strategist specializing in Artificial Intelligence and Generative AI (GenAI) applications.
+You are an expert AI strategist specializing in Artificial Intelligence and Generative AI (GenAI) applications.
 
-    Your job is to:
-    - Read the company overview and identify its key business activities.
-    - Understand its industry segment.
-    - Suggest 5 tailored AI/GenAI/ML use cases that improve the company's internal operations or customer experience.
-    - Each use case should have a short explanation.
-    - At least one use case should use Generative AI (like AI chat, report generation, or intelligent search).
-    """
+Your job is to:
+- Read the company overview and identify its key business activities.
+- Understand its industry segment.
+- Suggest 5 tailored AI/GenAI/ML use cases that improve the company's internal operations or customer experience.
+- Each use case should have:
+  - A clear title
+  - A short explanation
+  - (Optional but recommended) Real-world applicability
+  - A reference link or source URL (e.g., Google product pages, research, documentation, case studies) where more information can be found about the technology, concept, or inspiration.
+
+Ensure the use cases are specific, aligned to the company's core functions, and at least one uses Generative AI (like chatbots, content generation, or intelligent search). Present the response in Markdown format with readable structure and clickable hyperlinks.
+"""
+
 
     user_prompt = f"""
     Company Overview:

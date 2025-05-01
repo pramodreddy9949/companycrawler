@@ -159,12 +159,12 @@
     function formatUseCases(data) {
       if (!data || typeof data !== 'string') return '❌ No data received';
   
-      // Auto-convert newlines to <br> and headings to HTML
       return data
         .replace(/^---$/gm, "<hr>") // horizontal rules
         .replace(/^### (.+)$/gm, '<h3>$1</h3>') // use case titles
         .replace(/^(\*\*.+?\*\*):/gm, '<strong>$1</strong>:') // bold titles
-        .replace(/\n/g, "<br>"); // convert remaining newlines to <br>
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color: #3498db; text-decoration: underline;">$1</a>') // clickable links
+        .replace(/\n/g, "<br>"); // convert newlines to <br>
     }
   </script>
   
