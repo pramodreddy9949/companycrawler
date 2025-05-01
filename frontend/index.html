@@ -60,6 +60,18 @@
       background-color: #2980b9;
     }
 
+  #output h3 {
+  margin-top: 20px;
+  color: #2c3e50;
+}
+
+ #output hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #ccc;
+}
+
+
     #loader {
       display: none;
       margin: 20px auto;
@@ -129,7 +141,11 @@
         });
 
         const data = await response.json();
-        output.textContent = JSON.stringify(data, null, 2);
+        console.log(data); // Helps you verify the structure
+
+        output.innerHTML = formatUseCases(data.use_cases);
+
+
       } catch (error) {
         output.textContent = '❌ Error: ' + error.message;
       } finally {
@@ -137,5 +153,20 @@
       }
     }
   </script>
+  
+
+  <script>
+    function formatUseCases(data) {
+      if (!data || typeof data !== 'string') return '❌ No data received';
+  
+      // Auto-convert newlines to <br> and headings to HTML
+      return data
+        .replace(/^---$/gm, "<hr>") // horizontal rules
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>') // use case titles
+        .replace(/^(\*\*.+?\*\*):/gm, '<strong>$1</strong>:') // bold titles
+        .replace(/\n/g, "<br>"); // convert remaining newlines to <br>
+    }
+  </script>
+  
 </body>
 </html>
